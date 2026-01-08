@@ -1,4 +1,5 @@
 ﻿using Employees_WebAPI.Model;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -8,6 +9,7 @@ namespace Employees_WebAPI.Controllers;
 [Route("api/[controller]")]
 public class EmployeesController : Controller
 {
+    private static readonly object _lock = new();
     public List<Employee> _employeeCollection = new List<Employee>
         {
             new Employee
@@ -28,23 +30,62 @@ public class EmployeesController : Controller
             }
         };
 
-    //[HttpGet]
-    //public IActionResult Index()
-    //{
-    //    return View();
-    //}
-
-    //[HttpGet]
-    //[Route("employees")]
-    public IActionResult GetEmployees()
+    [HttpGet(Name = "GetAllEmployee")]
+    public ActionResult<IEnumerable<Employee>> GetEmployees()
     {
         return Ok(_employeeCollection);
     }
 
-    [HttpGet("{id}")]
-    //[Route("employees/{id}")]
-    public IActionResult GetEmployees(int id)
+    [HttpGet("{id}", Name = "GetEmployeeById")]
+    public ActionResult<Employee> GetEmployees(int id)
     {
-        return Ok(_employeeCollection.Where(e => e.Id == id).FirstOrDefault());
+        var employee = _employeeCollection.FirstOrDefault(e => e.Id == id);
+
+        if (employee == null)
+        {
+            return NotFound("User with required Id is not found\n");
+        }
+        return Ok(employee);
+    }
+
+    [HttpPost]
+    public ActionResult<Employee> CreateNewEmployee(Employee employee)
+    {
+        if (employee == null)
+        {
+            return BadRequest(new { Message = "Request body is null." });
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState); // Returns 400 Bad Request
+        }
+
+        lock (_lock)
+        {
+            // Prevent duplicate by Id (if supplied) or by name (case-insensitive)
+            if (employee.Id != 0 && _employeeCollection.Any(e => e.Id == employee.Id))
+            {
+                return Conflict(new { Message = "Employee with this Id already exists." });
+            }
+
+            if (!string.IsNullOrWhiteSpace(employee.Name) &&
+                _employeeCollection.Any(e => string.Equals(e.Name, employee.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                return Conflict(new { Message = "Employee with this Name already exists." });
+            }
+
+            // Assign new Id if not provided
+            if (employee.Id == 0)
+            {
+                var nextId = _employeeCollection.Any() ? _employeeCollection.Max(e => e.Id) + 1 : 1;
+                employee.Id = nextId;
+            }
+
+            _employeeCollection.Add(employee);
+        }
+
+        return CreatedAtRoute("GetEmployeeById", new { id = employee.Id }, employee);
     }
 }
+
