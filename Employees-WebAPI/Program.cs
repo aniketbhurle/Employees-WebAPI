@@ -1,5 +1,7 @@
 
+using Employees_WebAPI.Data;
 using Employees_WebAPI.Middleware;
+using Microsoft.EntityFrameworkCore;
 
 namespace Employees_WebAPI
 {
@@ -15,6 +17,12 @@ namespace Employees_WebAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            //Add DbContext
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection")
+                    ));
 
             var app = builder.Build();
 
