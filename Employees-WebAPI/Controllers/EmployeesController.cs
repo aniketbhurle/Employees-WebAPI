@@ -1,5 +1,6 @@
 ﻿using Employees_WebAPI.Data;
 using Employees_WebAPI.Model;
+using Employees_WebAPI.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -10,12 +11,12 @@ namespace Employees_WebAPI.Controllers;
 [Route("api/[controller]")]
 public class EmployeesController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly IEmployeeService _employeeService;
     private static readonly object _lock = new();
 
-    public EmployeesController(AppDbContext context)
+    public EmployeesController(IEmployeeService employeeService)
     {
-        _context = context;
+        _employeeService = employeeService;
     }
 
     public List<Employee> _employeeCollection = new List<Employee>
@@ -44,7 +45,7 @@ public class EmployeesController : Controller
         //return Ok(_employeeCollection); //PREVIOUSLY
 
         //As per AppDbContext
-        var allEmployees = _context.Employees.ToList();
+        var allEmployees = _employeeService.GetEmployees();
         return Ok(allEmployees);
     }
 
@@ -52,7 +53,7 @@ public class EmployeesController : Controller
     public ActionResult<Employee> GetEmployees(int id)
     {
         //var employee = _employeeCollection.FirstOrDefault(e => e.Id == id); //PREVIOUSLY
-        var employee = _context.Employees.FirstOrDefault(e => e.Id == id);
+        var employee = _employeeService.GetEmployeeById(id);
 
         if (employee == null)
         {
@@ -78,29 +79,31 @@ public class EmployeesController : Controller
         {
             // Prevent duplicate by Id (if supplied) or by name (case-insensitive)
             #region Commented out
-                    //if (employee.Id != 0 && _employeeCollection.Any(e => e.Id == employee.Id))
-                    //{
-                    //    return Conflict(new { Message = "Employee with this Id already exists." });
-                    //}
+            //if (employee.Id != 0 && _employeeCollection.Any(e => e.Id == employee.Id))
+            //{
+            //    return Conflict(new { Message = "Employee with this Id already exists." });
+            //}
 
-                    //if (!string.IsNullOrWhiteSpace(employee.Name) &&
-                    //    _employeeCollection.Any(e => string.Equals(e.Name, employee.Name, StringComparison.OrdinalIgnoreCase)))
-                    //{
-                    //    return Conflict(new { Message = "Employee with this Name already exists." });
-                    //}
+            //if (!string.IsNullOrWhiteSpace(employee.Name) &&
+            //    _employeeCollection.Any(e => string.Equals(e.Name, employee.Name, StringComparison.OrdinalIgnoreCase)))
+            //{
+            //    return Conflict(new { Message = "Employee with this Name already exists." });
+            //}
 
-                    //// Assign new Id if not provided
-                    //if (employee.Id == 0)
-                    //{
-                    //    var nextId = _employeeCollection.Any() ? _employeeCollection.Max(e => e.Id) + 1 : 1;
-                    //    employee.Id = nextId;
-                    //}
+            //// Assign new Id if not provided
+            //if (employee.Id == 0)
+            //{
+            //    var nextId = _employeeCollection.Any() ? _employeeCollection.Max(e => e.Id) + 1 : 1;
+            //    employee.Id = nextId;
+            //}
             #endregion
 
             //_employeeCollection.Add(employee); //PREVIOUSLY
 
-            _context.Employees.Add(employee);
-            _context.SaveChanges();
+            //_context.Employees.Add(employee);
+            //_context.SaveChanges();
+
+            _employeeService.AddNewEmployee(employee);
         }
 
         return CreatedAtRoute("GetEmployeeById", new { id = employee.Id }, employee);
