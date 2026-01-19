@@ -1,12 +1,12 @@
-﻿using Employees_WebAPI.Model;
+﻿using Employees_WebAPI.DTOs;
+using Employees_WebAPI.Model;
 
-namespace Employees_WebAPI.Services
+namespace Employees_WebAPI.Services;
+
+public interface IEmployeeService
 {
-    public interface IEmployeeService
-    {
-        Task AddNewEmployee(Employee employee);
-        Task DeleteEmployeeAsync(Employee employee);
-        Task<Employee> GetEmployeeById(int ID);
-        Task<IEnumerable<Employee>> GetEmployees();
-    }
+    Task AddNewEmployee(Employee employee);
+    Task DeleteEmployeeAsync(Employee employee);
+    Task<EmployeeDto> GetEmployeeById(int ID);
+    Task<IEnumerable<EmployeeDto>> GetEmployees();
 }

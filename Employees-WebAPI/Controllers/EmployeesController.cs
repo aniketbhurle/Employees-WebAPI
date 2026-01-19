@@ -1,9 +1,11 @@
 ﻿using Employees_WebAPI.Data;
+using Employees_WebAPI.DTOs;
 using Employees_WebAPI.Model;
 using Employees_WebAPI.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Employees_WebAPI.Controllers;
 
@@ -40,25 +42,26 @@ public class EmployeesController : Controller
         };
 
     [HttpGet(Name = "GetAllEmployee")]
-    public ActionResult<IEnumerable<Employee>> GetEmployees()
+    public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployees()
     {
         //return Ok(_employeeCollection); //PREVIOUSLY
 
         //As per AppDbContext
-        var allEmployees = _employeeService.GetEmployees();
+        var allEmployees = await _employeeService.GetEmployees();
         return Ok(allEmployees);
     }
 
     [HttpGet("{id}", Name = "GetEmployeeById")]
-    public ActionResult<Employee> GetEmployees(int id)
+    public async Task<ActionResult<EmployeeDto>> GetEmployees(int id)
     {
         //var employee = _employeeCollection.FirstOrDefault(e => e.Id == id); //PREVIOUSLY
-        var employee = _employeeService.GetEmployeeById(id);
+        var employee = await _employeeService.GetEmployeeById(id);
 
         if (employee == null)
         {
             return NotFound("User with required Id is not found\n");
         }
+
         return Ok(employee);
     }
 

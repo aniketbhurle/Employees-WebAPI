@@ -1,6 +1,8 @@
 
 using Employees_WebAPI.Data;
 using Employees_WebAPI.Middleware;
+using Employees_WebAPI.Repository;
+using Employees_WebAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Employees_WebAPI
@@ -23,6 +25,10 @@ namespace Employees_WebAPI
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("DefaultConnection")
                     ));
+
+            // Register application services and repositories for dependency injection
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            builder.Services.AddScoped<IEmployeeRespository, EmployeeRepository>();
 
             var app = builder.Build();
 

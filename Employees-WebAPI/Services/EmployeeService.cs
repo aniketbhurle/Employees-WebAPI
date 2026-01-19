@@ -1,4 +1,5 @@
-﻿using Employees_WebAPI.Model;
+﻿using Employees_WebAPI.DTOs;
+using Employees_WebAPI.Model;
 using Employees_WebAPI.Repository;
 using Microsoft.OpenApi.Models;
 using System.ComponentModel.DataAnnotations;
@@ -12,18 +13,36 @@ public class EmployeeService : IEmployeeService
     {
         _employeeRespository = employeeRespository;
     }
-    public async Task<Employee> GetEmployeeById(int ID)
+    public async Task<EmployeeDto> GetEmployeeById(int ID)
     {
         var employee = await _employeeRespository.GetEmployeeById(ID);
+
         if (employee == null)
         {
             throw new InvalidDataException($"No Employee Found by ID: {ID}");
         }
-        return employee;
+
+        var dto = new EmployeeDto()
+        {
+            Department = employee.Department,
+            Name = employee.Name,
+            Id = employee.Id
+        };
+
+        return dto;
     }
-    public async Task<IEnumerable<Employee>> GetEmployees()
+    public async Task<IEnumerable<EmployeeDto>> GetEmployees()
     {
-        return await _employeeRespository.GetAllEmployees();
+        var employees = await _employeeRespository.GetAllEmployees();
+
+        var dto = employees.Select(e => new EmployeeDto
+        {
+            Id = e.Id,
+            Name = e.Name,
+            Department = e.Department
+        });
+
+        return dto;
     }
     public async Task AddNewEmployee(Employee employee)
     {
