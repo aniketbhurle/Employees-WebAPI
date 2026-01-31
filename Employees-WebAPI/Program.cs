@@ -1,5 +1,6 @@
 
 using Employees_WebAPI.Data;
+using Employees_WebAPI.Mapping;
 using Employees_WebAPI.Middleware;
 using Employees_WebAPI.Repository;
 using Employees_WebAPI.Services;
@@ -29,6 +30,11 @@ namespace Employees_WebAPI
             // Register application services and repositories for dependency injection
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IEmployeeRespository, EmployeeRepository>();
+
+            builder.Services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile(new EmployeeProfile());
+            });
 
             var app = builder.Build();
 

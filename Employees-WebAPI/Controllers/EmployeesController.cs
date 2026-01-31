@@ -66,7 +66,7 @@ public class EmployeesController : Controller
     }
 
     [HttpPost]
-    public ActionResult<Employee> CreateNewEmployee(Employee employee)
+    public async Task<ActionResult<Employee>> CreateNewEmployee(Employee employee)
     {
         if (employee == null)
         {
@@ -78,8 +78,6 @@ public class EmployeesController : Controller
             return ValidationProblem(ModelState); // Returns 400 Bad Request
         }
 
-        lock (_lock)
-        {
             // Prevent duplicate by Id (if supplied) or by name (case-insensitive)
             #region Commented out
             //if (employee.Id != 0 && _employeeCollection.Any(e => e.Id == employee.Id))
@@ -106,8 +104,7 @@ public class EmployeesController : Controller
             //_context.Employees.Add(employee);
             //_context.SaveChanges();
 
-            _employeeService.AddNewEmployee(employee);
-        }
+            await _employeeService.AddNewEmployee(employee);
 
         return CreatedAtRoute("GetEmployeeById", new { id = employee.Id }, employee);
     }

@@ -30,7 +30,7 @@ public class EmployeeRepository : IEmployeeRespository
     public async Task AddEmployee(Employee employee) //AddNew
     {
         _context.Employees.Add(employee);
-        SaveEmployeeAsync();
+        await _context.SaveChangesAsync();
     }
     public async Task UpdateEmployee(Employee employee) //Update
     {
@@ -44,14 +44,7 @@ public class EmployeeRepository : IEmployeeRespository
     }
     private async void SaveEmployeeAsync()
     {
-        try
-        {
             await _context.SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
     }
 
 }
