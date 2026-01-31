@@ -40,6 +40,8 @@ namespace Employees_WebAPI
 
             app.UseMiddleware<RequestLoggingMiddleware>();
 
+            app.UseMiddleware<GlobalExceptionMiddleware>();
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

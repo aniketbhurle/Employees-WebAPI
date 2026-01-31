@@ -59,7 +59,8 @@ public class EmployeesController : Controller
 
         if (employee == null)
         {
-            return NotFound("User with required Id is not found\n");
+            throw new Exception("Employee Not Found");
+            //return NotFound("User with required Id is not found\n");
         }
 
         return Ok(employee);
