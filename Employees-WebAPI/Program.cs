@@ -5,6 +5,7 @@ using Employees_WebAPI.Middleware;
 using Employees_WebAPI.Repository;
 using Employees_WebAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Employees_WebAPI
 {
@@ -12,7 +13,15 @@ namespace Employees_WebAPI
     {
         public static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                        .MinimumLevel.Information()
+                        .WriteTo.Console()
+                        .CreateLogger();
+
             var builder = WebApplication.CreateBuilder(args);
+
+            //adding Logger
+            builder.Host.UseSerilog();
 
             // Add services to the container.
 

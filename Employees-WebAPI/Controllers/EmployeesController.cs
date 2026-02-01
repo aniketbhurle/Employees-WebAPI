@@ -14,11 +14,14 @@ namespace Employees_WebAPI.Controllers;
 public class EmployeesController : Controller
 {
     private readonly IEmployeeService _employeeService;
+    private readonly ILogger<EmployeesController> _logger;
     private static readonly object _lock = new();
 
-    public EmployeesController(IEmployeeService employeeService)
+    public EmployeesController(IEmployeeService employeeService,
+        ILogger<EmployeesController> logger)
     {
         _employeeService = employeeService;
+        _logger = logger;
     }
 
     public List<Employee> _employeeCollection = new List<Employee>
@@ -47,7 +50,10 @@ public class EmployeesController : Controller
         //return Ok(_employeeCollection); //PREVIOUSLY
 
         //As per AppDbContext
+        _logger.LogInformation("Starting to fetch all employees");
         var allEmployees = await _employeeService.GetEmployees();
+
+        _logger.LogInformation("Fetched all employees.....");
         return Ok(allEmployees);
     }
 
