@@ -1,4 +1,6 @@
 
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Employees_WebAPI.Data;
 using Employees_WebAPI.Mapping;
 using Employees_WebAPI.Middleware;
@@ -25,7 +27,7 @@ namespace Employees_WebAPI
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -44,6 +46,22 @@ namespace Employees_WebAPI
             {
                 cfg.AddProfile(new EmployeeProfile());
             });
+
+            //adding Api Versioning
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+            })
+                .AddApiExplorer(options =>
+            {
+                options.SubstituteApiVersionInUrl = true;
+                options.GroupNameFormat = "'v'VVV";
+            });
+              
+
+            builder.Services.AddControllers();
 
             var app = builder.Build();
 

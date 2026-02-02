@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Employees_WebAPI.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
+[ApiController]
 public class EmployeesController : Controller
 {
     private readonly IEmployeeService _employeeService;
