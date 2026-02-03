@@ -2,6 +2,7 @@
 using Employees_WebAPI.DTOs;
 using Employees_WebAPI.Model;
 using Employees_WebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -44,6 +45,14 @@ public class EmployeesController : Controller
             }
         };
 
+    [Authorize]
+    [HttpGet("protected", Name ="GetEmps")]
+    public IActionResult GetEmps()
+    {
+        return Ok("This is a protected endpoint");
+    }
+
+    [Authorize]
     [HttpGet(Name = "GetAllEmployee")]
     public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployees()
     {
