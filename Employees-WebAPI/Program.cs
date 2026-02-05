@@ -114,6 +114,13 @@ public class Program
             };
         });
 
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("HROnly", policy => policy.RequireClaim("Department", "HR"));
+
+            options.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
+        });
+
         var app = builder.Build();
 
         app.UseMiddleware<RequestLoggingMiddleware>();

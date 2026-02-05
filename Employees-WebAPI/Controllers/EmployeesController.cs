@@ -46,10 +46,24 @@ public class EmployeesController : Controller
         };
 
     [Authorize]
-    [HttpGet("protected", Name ="GetEmps")]
+    [HttpGet("protected", Name = "GetEmps")]
     public IActionResult GetEmps()
     {
         return Ok("This is a protected endpoint");
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin-only")]
+    public IActionResult GetAdminData()
+    {
+        return Ok("Only admin can access this data");
+    }
+
+    [Authorize(Policy ="HrOnly")]
+    [HttpGet("HrOnly")]
+    public IActionResult GetHrData()
+    {
+        return Ok("Only HR department can access this...");
     }
 
     [Authorize]
@@ -94,33 +108,33 @@ public class EmployeesController : Controller
             return ValidationProblem(ModelState); // Returns 400 Bad Request
         }
 
-            // Prevent duplicate by Id (if supplied) or by name (case-insensitive)
-            #region Commented out
-            //if (employee.Id != 0 && _employeeCollection.Any(e => e.Id == employee.Id))
-            //{
-            //    return Conflict(new { Message = "Employee with this Id already exists." });
-            //}
+        // Prevent duplicate by Id (if supplied) or by name (case-insensitive)
+        #region Commented out
+        //if (employee.Id != 0 && _employeeCollection.Any(e => e.Id == employee.Id))
+        //{
+        //    return Conflict(new { Message = "Employee with this Id already exists." });
+        //}
 
-            //if (!string.IsNullOrWhiteSpace(employee.Name) &&
-            //    _employeeCollection.Any(e => string.Equals(e.Name, employee.Name, StringComparison.OrdinalIgnoreCase)))
-            //{
-            //    return Conflict(new { Message = "Employee with this Name already exists." });
-            //}
+        //if (!string.IsNullOrWhiteSpace(employee.Name) &&
+        //    _employeeCollection.Any(e => string.Equals(e.Name, employee.Name, StringComparison.OrdinalIgnoreCase)))
+        //{
+        //    return Conflict(new { Message = "Employee with this Name already exists." });
+        //}
 
-            //// Assign new Id if not provided
-            //if (employee.Id == 0)
-            //{
-            //    var nextId = _employeeCollection.Any() ? _employeeCollection.Max(e => e.Id) + 1 : 1;
-            //    employee.Id = nextId;
-            //}
-            #endregion
+        //// Assign new Id if not provided
+        //if (employee.Id == 0)
+        //{
+        //    var nextId = _employeeCollection.Any() ? _employeeCollection.Max(e => e.Id) + 1 : 1;
+        //    employee.Id = nextId;
+        //}
+        #endregion
 
-            //_employeeCollection.Add(employee); //PREVIOUSLY
+        //_employeeCollection.Add(employee); //PREVIOUSLY
 
-            //_context.Employees.Add(employee);
-            //_context.SaveChanges();
+        //_context.Employees.Add(employee);
+        //_context.SaveChanges();
 
-            await _employeeService.AddNewEmployee(employee);
+        await _employeeService.AddNewEmployee(employee);
 
         return CreatedAtRoute("GetEmployeeById", new { id = employee.Id }, employee);
     }

@@ -25,10 +25,17 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
 
-        var claims = new[]
+        /*var claims = new[]
         {
             new Claim(ClaimTypes.Name, username),
             new Claim(ClaimTypes.Role,"Admin")
+        };*/
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, username),
+            new Claim(ClaimTypes.Role, "Admin"),
+            new Claim("Department","HR")
         };
 
         var key = new SymmetricSecurityKey(
