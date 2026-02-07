@@ -12,6 +12,7 @@ using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Employees_WebAPI.Filters;
 
 namespace Employees_WebAPI;
 
@@ -119,7 +120,20 @@ public class Program
             options.AddPolicy("HROnly", policy => policy.RequireClaim("Department", "HR"));
 
             options.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
+
+            options.AddPolicy("AdminNHR", policy =>
+            {
+                policy.RequireClaim("Department", "HR", "Finance");
+                policy.RequireRole("Admin");
+            });
         });
+        
+        //Adding Action Method
+        builder.Services.AddScoped<ActionLoggingFilter>();
+
+        //Adding Custom Auth Filter
+        builder.Services.AddScoped<CustomAuthFilter>();
+
 
         var app = builder.Build();
 

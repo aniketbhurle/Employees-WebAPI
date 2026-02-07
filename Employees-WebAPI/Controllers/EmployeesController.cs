@@ -1,5 +1,6 @@
 ﻿using Employees_WebAPI.Data;
 using Employees_WebAPI.DTOs;
+using Employees_WebAPI.Filters;
 using Employees_WebAPI.Model;
 using Employees_WebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace Employees_WebAPI.Controllers;
 
 [Route("api/[controller]")]
+[ServiceFilter(typeof(ActionLoggingFilter))]
 [ApiController]
 public class EmployeesController : Controller
 {
@@ -51,6 +53,22 @@ public class EmployeesController : Controller
     {
         return Ok("This is a protected endpoint");
     }
+
+    [ServiceFilter(typeof(ActionLoggingFilter))]
+    [HttpGet("ActionMethodsTest")]
+    public IActionResult GetEmployeesActionMethod()
+    {
+        return Ok("Employees list");
+    }
+
+    [ServiceFilter(typeof(CustomAuthFilter))]
+    [ServiceFilter(typeof(ActionLoggingFilter))]
+    [HttpGet("secure-data")]
+    public IActionResult GetSecureData()
+    {
+        return Ok("Only Admin can access this");
+    }
+
 
     [Authorize(Roles = "Admin")]
     [HttpGet("admin-only")]
