@@ -134,6 +134,8 @@ public class Program
         //Adding Custom Auth Filter
         builder.Services.AddScoped<CustomAuthFilter>();
 
+        //Adding In-Memory Cache
+        builder.Services.AddMemoryCache();
 
         var app = builder.Build();
 
