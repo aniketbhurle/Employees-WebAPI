@@ -137,6 +137,13 @@ public class Program
         //Adding In-Memory Cache
         builder.Services.AddMemoryCache();
 
+        //Adding Redis Cache
+        builder.Services.AddStackExchangeRedisCache( option =>
+        {
+            option.Configuration = "localhost:6379";
+            option.InstanceName = "EmployeesApi:";
+        });
+
         var app = builder.Build();
 
         app.UseMiddleware<RequestLoggingMiddleware>();
