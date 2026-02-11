@@ -1,18 +1,19 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using Employees_WebAPI.BackgroundServices.cs;
 using Employees_WebAPI.Data;
+using Employees_WebAPI.Filters;
 using Employees_WebAPI.Mapping;
 using Employees_WebAPI.Middleware;
 using Employees_WebAPI.Repository;
 using Employees_WebAPI.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Microsoft.OpenApi.Models;
-using Employees_WebAPI.Filters;
 
 Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
@@ -137,6 +138,9 @@ builder.Services.AddStackExchangeRedisCache(option =>
     option.Configuration = "localhost:6379";
     option.InstanceName = "EmployeesApi:";
 });
+
+//Adding background services
+builder.Services.AddHostedService<EmailBackgroundService>();
 
 var app = builder.Build();
 
